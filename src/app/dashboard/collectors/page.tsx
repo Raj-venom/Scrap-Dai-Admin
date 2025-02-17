@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { CollectorForm } from "@/components/form/collector-form"
+import { CollectorForm } from "@/components/forms/collector-form"
 import { CollectorDetailsModal } from "@/components/collector-details-modal"
 import { SearchFilter } from "@/components/search-filter"
 import { Button } from "@/components/ui/button"
