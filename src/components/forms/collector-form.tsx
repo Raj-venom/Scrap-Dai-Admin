@@ -7,18 +7,37 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Plus } from "lucide-react"
+import collectorService from "@/services/collector.api"
 
 export function CollectorForm() {
     const [open, setOpen] = useState(false)
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
-        // print user input
-        const formData = new FormData(event.currentTarget)
-        const data = Object.fromEntries(formData)
-        console.log(data)
 
-        setOpen(false)
+        const formData = new FormData(event.currentTarget)
+        const data: CollectorRegisterParams = {
+            fullName: formData.get("fullName") as string,
+            email: formData.get("email") as string,
+            phone: formData.get("phone") as string,
+            current_address: formData.get("current_address") as string
+        };
+
+        try {
+            const response = await collectorService.registerCollector(data)
+            console.log(response)
+            if (response.success) {
+                alert("Collector registered successfully")
+                setOpen(false)
+            } else {
+                alert(`Error registering collector, ${response.message}`)
+            }
+
+        } catch (error: any) {
+            alert(`Error registering collector, ${error.message}`);
+            console.error(error.message)
+        }
+
     }
 
     return (
@@ -48,10 +67,6 @@ export function CollectorForm() {
                     <div className="space-y-2">
                         <Label htmlFor="current_address">Current Address</Label>
                         <Textarea id="current_address" name="current_address" required />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="profileImage">Profile Image</Label>
-                        <Input id="profileImage" name="profileImage" type="file" required accept="image/*" />
                     </div>
                     <Button type="submit" className="w-full bg-primary hover:bg-primary/90">
                         Register Collector

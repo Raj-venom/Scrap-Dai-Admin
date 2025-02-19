@@ -19,10 +19,39 @@ declare interface AddNewScrapParams {
 declare interface UpdateScrapPriceParams {
     id: string;
     pricePerKg: number;
-}   
+}
 
 declare interface AddNewCategoryParams {
     name: string;
     description: string;
     categoryImage: File;
+}
+
+declare interface Collector {
+    _id: string
+    email: string;
+    password: string;
+    fullName: string;
+    phone: string;
+    avatar: string;
+    current_address: string;
+    firstLogin: boolean;
+    role: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
+declare interface User {
+    _id: string;
+    email: string;
+    password: string;
+    fullName: string;
+    phone: string;
+    gender: string;
+    avatar: string;
+    current_address: string;
+    isverified: boolean;
+    role: string;
+    createdAt: string;
+    updatedAt: string;
 }

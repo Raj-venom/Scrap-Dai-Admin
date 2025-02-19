@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ForgotPasswordDialog } from "@/components/auth/forgot-password-dialog"
 import { Eye, EyeOff } from "lucide-react"
+import authService from "@/services/auth.api"
 
 export default function LoginPage() {
     const router = useRouter()
@@ -19,13 +20,30 @@ export default function LoginPage() {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        const formData = new FormData(e.currentTarget)
-        const data = Object.fromEntries(formData.entries())
-        console.log(data)
-        setError("Invalid email or password")
 
-        router.replace("/dashboard")
+        try {
+            const formData = new FormData(e.currentTarget)
+            const data = Object.fromEntries(formData.entries()) as { identifier: string; password: string };
+
+
+            const response = await authService.login(data)
+            if (!response?.success) {
+                setError(response.message)
+                return
+            }
+            console.log(response)
+            router.replace("/dashboard")
+
+        } catch (error: any) {
+            setError(error.message)
+
+        }
+
+
+
     }
+
+
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-background p-4">
@@ -40,8 +58,8 @@ export default function LoginPage() {
                 <CardContent>
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="space-y-2">
-                            <Label htmlFor="email">Email</Label>
-                            <Input id="email" name="email" type="email" placeholder="m@example.com" required />
+                            <Label htmlFor="identifier">identifier</Label>
+                            <Input id="identifier" name="identifier" type="email" placeholder="Email or password" required />
                         </div>
                         <div className="space-y-2">
                             <div className="flex items-center justify-between">

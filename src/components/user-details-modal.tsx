@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Image from "next/image"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -14,19 +14,6 @@ interface Order {
     total: number
 }
 
-interface User {
-    id: number
-    email: string
-    fullName: string
-    phone: string
-    gender: string
-    avatar: string
-    current_address: string
-    isverified: boolean
-    role: string
-    createdAt: string
-    orders: Order[]
-}
 
 interface UserDetailsModalProps {
     user: User | null
@@ -59,13 +46,16 @@ export function UserDetailsModal({ user, isOpen, onClose }: UserDetailsModalProp
         }
     }
 
-    const filteredOrders = filterOrders(user.orders)
+    // const filteredOrders = filterOrders(user.orders)
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="max-w-4xl">
                 <DialogHeader>
                     <DialogTitle>User Details</DialogTitle>
+                    <DialogDescription>
+                        View details of {user.fullName}
+                    </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 md:grid-cols-2">
                     <Card>
@@ -80,7 +70,7 @@ export function UserDetailsModal({ user, isOpen, onClose }: UserDetailsModalProp
                                         alt={user.fullName}
                                         width={100}
                                         height={100}
-                                        className="rounded-full"
+                                        className="rounded-full w-24 h-24 object-cover"
                                     />
                                 </div>
                                 <p>
@@ -138,13 +128,13 @@ export function UserDetailsModal({ user, isOpen, onClose }: UserDetailsModalProp
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {filteredOrders.map((order) => (
+                                    {/* {filteredOrders.map((order) => (
                                         <TableRow key={order.id}>
                                             <TableCell>{new Date(order.date).toLocaleDateString()}</TableCell>
                                             <TableCell>{order.items.map((item) => item.name).join(", ")}</TableCell>
                                             <TableCell>₹{order.total.toFixed(2)}</TableCell>
                                         </TableRow>
-                                    ))}
+                                    ))} */}
                                 </TableBody>
                             </Table>
                         </CardContent>

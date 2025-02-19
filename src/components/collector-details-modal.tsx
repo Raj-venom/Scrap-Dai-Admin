@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Image from "next/image"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -14,16 +14,6 @@ interface Order {
     total: number
 }
 
-interface Collector {
-    id: number
-    fullName: string
-    email: string
-    phone: string
-    current_address: string
-    createdAt: string
-    profileImage: string
-    orders: Order[]
-}
 
 interface CollectorDetailsModalProps {
     collector: Collector | null
@@ -56,13 +46,16 @@ export function CollectorDetailsModal({ collector, isOpen, onClose }: CollectorD
         }
     }
 
-    const filteredOrders = filterOrders(collector.orders)
+    // const filteredOrders = filterOrders(collector.orders)
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="max-w-4xl">
                 <DialogHeader>
                     <DialogTitle>Collector Details</DialogTitle>
+                    <DialogDescription>
+                        View details of {collector.fullName}
+                    </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 md:grid-cols-2">
                     <Card>
@@ -73,11 +66,11 @@ export function CollectorDetailsModal({ collector, isOpen, onClose }: CollectorD
                             <div className="space-y-2">
                                 <div className="flex justify-center mb-4">
                                     <Image
-                                        src={collector.profileImage || "/placeholder.svg"}
+                                        src={collector.avatar || "/placeholder.svg"}
                                         alt={collector.fullName}
                                         width={100}
                                         height={100}
-                                        className="rounded-full"
+                                        className="rounded-full w-24 h-24 object-cover"
                                     />
                                 </div>
                                 <p>
@@ -126,13 +119,13 @@ export function CollectorDetailsModal({ collector, isOpen, onClose }: CollectorD
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {filteredOrders.map((order) => (
+                                    {/* {filteredOrders.map((order) => (
                                         <TableRow key={order.id}>
                                             <TableCell>{new Date(order.date).toLocaleDateString()}</TableCell>
                                             <TableCell>{order.items.map((item) => item.name).join(", ")}</TableCell>
                                             <TableCell>₹{order.total.toFixed(2)}</TableCell>
                                         </TableRow>
-                                    ))}
+                                    ))} */}
                                 </TableBody>
                             </Table>
                         </CardContent>
