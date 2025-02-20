@@ -55,3 +55,27 @@ declare interface User {
     createdAt: string;
     updatedAt: string;
 }
+
+declare interface Category {
+    _id: string;
+    name: string;
+    slug: string;
+    description: string;
+    image: string;
+    createdAt: string;
+    updatedAt: string;
+    scraps: Scrap[];
+}
+
+
+        
+declare interface Scrap {
+    _id: string;
+    name: string;
+    description: string;
+    pricePerKg: number;
+    scrapImage: string;
+    category: Category;
+    createdAt: string;
+    updatedAt: string;
+}

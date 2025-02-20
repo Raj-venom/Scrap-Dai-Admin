@@ -20,6 +20,21 @@ const CollectorsPage = () => {
   const [searchTerm, setSearchTerm] = useState("")
   const [filterValue, setFilterValue] = useState("all")
   const [selectedCollector, setSelectedCollector] = useState<(typeof collectors)[0] | null>(null)
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    ; (async () => {
+      try {
+        const response = await collectorService.getAllCollectors();
+        setCollectors(response.data);
+      } catch (error) {
+        console.error("Error fetching collectors:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    })();
+  }, []);
+
 
   const filteredCollectors = collectors.filter((collector) => {
     const matchesSearch =
@@ -35,13 +50,15 @@ const CollectorsPage = () => {
     return matchesSearch
   })
 
-  useEffect(() => {
-    ; (async () => {
-      const response = await collectorService.getAllCollectors()
-      setCollectors(response.data)
-    })();
 
-  }, [])
+
+  if (isLoading)
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-gray-500">Loading collectors...</p>
+      </div>
+    );
+
 
   return (
     <div className="space-y-6">

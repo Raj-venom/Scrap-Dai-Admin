@@ -20,6 +20,20 @@ export default function UsersPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [filterValue, setFilterValue] = useState("all")
   const [selectedUser, setSelectedUser] = useState<(typeof users)[0] | null>(null)
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    ; (async () => {
+      try {
+        const response = await userService.getAllUsers();
+        setUsers(response.data);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    })();
+  }, []);
 
   const filteredUsers = users.filter((user) => {
     const matchesSearch =
@@ -35,13 +49,13 @@ export default function UsersPage() {
     return matchesSearch
   })
 
-  useEffect(() => {
-    ; (async () => {
-      const response = await userService.getAllUsers()
-      setUsers(response.data)
-    })();
+  if (isLoading)
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-gray-500">Loading users...</p>
+      </div>
+    );
 
-  }, [])
 
   return (
     <div className="space-y-6">

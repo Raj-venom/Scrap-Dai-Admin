@@ -1,56 +1,40 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { CategoryForm } from "@/components/forms/category-form"
 import { ScrapItemForm } from "@/components/forms/scrap-item-form"
 import { SearchFilter } from "@/components/search-filter"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import Image from "next/image"
+import categoryService from "@/services/category.api"
 
-// Mock data for categories and scrap items
-const categories = [
-  {
-    id: 1,
-    name: "Metal",
-    description: "Various metal scraps",
-    image: "/placeholder.svg",
-    items: [
-      { id: 1, name: "Copper Wire", description: "Stripped copper wire", pricePerKg: 5.5 },
-      { id: 2, name: "Aluminum Cans", description: "Crushed aluminum cans", pricePerKg: 1.2 },
-    ],
-  },
-  {
-    id: 2,
-    name: "Paper",
-    description: "All types of paper waste",
-    image: "/placeholder.svg",
-    items: [
-      { id: 3, name: "Cardboard", description: "Flattened cardboard boxes", pricePerKg: 0.3 },
-      { id: 4, name: "Newspapers", description: "Old newspapers", pricePerKg: 0.25 },
-    ],
-  },
-  {
-    id: 3,
-    name: "Plastic",
-    description: "Different plastic materials",
-    image: "/placeholder.svg",
-    items: [
-      { id: 5, name: "PET Bottles", description: "Clear plastic bottles", pricePerKg: 0.4 },
-      { id: 6, name: "HDPE Containers", description: "High-density polyethylene containers", pricePerKg: 0.35 },
-    ],
-  },
-]
 
 const filterOptions = [
   { value: "all", label: "All Categories" },
-  { value: "withItems", label: "Categories with Items" },
-  { value: "withoutItems", label: "Categories without Items" },
+  { value: "withScrap", label: "Categories with Scrap" },
+  { value: "withoutScrap", label: "Categories without Scrap" },
 ]
 
 export default function CategoriesPage() {
+
+  const [categories, setCategories] = useState<Category[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [filterValue, setFilterValue] = useState("all")
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    ; (async () => {
+      try {
+        const response = await categoryService.getAllCategories();
+        setCategories(response.data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    })();
+  }, []);
 
   const filteredCategories = categories.filter((category) => {
     const matchesSearch =
@@ -58,11 +42,18 @@ export default function CategoriesPage() {
       category.description.toLowerCase().includes(searchTerm.toLowerCase())
 
     if (filterValue === "all") return matchesSearch
-    if (filterValue === "withItems") return matchesSearch && category.items.length > 0
-    if (filterValue === "withoutItems") return matchesSearch && category.items.length === 0
+    if (filterValue === "withScrap") return matchesSearch && category.scraps.length > 0
+    if (filterValue === "withoutScrap") return matchesSearch && category.scraps.length === 0
 
     return matchesSearch
   })
+
+  if (isLoading)
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-gray-500">Loading categories...</p>
+      </div>
+    );
 
   return (
     <div className="space-y-6">
@@ -70,21 +61,23 @@ export default function CategoriesPage() {
         <h1 className="text-3xl font-bold">Scrap Categories</h1>
         <div className="space-x-2">
           <CategoryForm />
-          <ScrapItemForm />
+          <ScrapItemForm categories={categories} />
         </div>
       </div>
       <SearchFilter onSearch={setSearchTerm} onFilter={setFilterValue} filterOptions={filterOptions} />
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {filteredCategories.map((category) => (
-          <Card key={category.id} className="flex flex-col">
+          <Card key={category._id} className="flex flex-col">
             <CardHeader>
               <div className="aspect-video relative mb-2">
                 <Image
                   src={category.image || "/placeholder.svg"}
                   alt={category.name}
-                  fill
+                  width={400}
+                  height={250}
                   className="object-cover rounded-md"
-                />
+                  priority />
+
               </div>
               <CardTitle>{category.name}</CardTitle>
             </CardHeader>
@@ -98,10 +91,10 @@ export default function CategoriesPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {category.items.map((item) => (
-                    <TableRow key={item.id}>
+                  {category.scraps.map((item) => (
+                    <TableRow key={item._id}>
                       <TableCell>{item.name}</TableCell>
-                      <TableCell>₹{item.pricePerKg.toFixed(2)}</TableCell>
+                      <TableCell>रु {item.pricePerKg.toFixed(2)}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

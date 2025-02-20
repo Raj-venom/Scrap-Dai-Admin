@@ -2,31 +2,52 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Plus } from "lucide-react"
+import scrapService from "@/services/scrap.api"
 
-// Mock categories data
-const categories = [
-    { id: 1, name: "Metal" },
-    { id: 2, name: "Paper" },
-    { id: 3, name: "Plastic" },
-]
 
-export function ScrapItemForm() {
+export function ScrapItemForm({ categories }: { categories: Category[] }) {
     const [open, setOpen] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
-        const formData = new FormData(event.currentTarget)
-        const data = Object.fromEntries(formData.entries())
-        console.log(data)
+        setIsLoading(true)
 
-        setOpen(false)
+        const formData = new FormData(event.currentTarget)
+        const data: AddNewScrapParams = {
+            name: formData.get("name") as string,
+            description: formData.get("description") as string,
+            category: formData.get("category") as string,
+            pricePerKg: parseFloat(formData.get("pricePerKg") as string),
+            scrapImage: formData.get("scrapImage") as File
+        }
+
+        try {
+            const response = await scrapService.addNewScrap(data)
+            console.log(response)
+            if (response.success) {
+                alert("Scrap item added successfully")
+                setOpen(false)
+            } else {
+                alert(`Error adding scrap item, ${response.message}`)
+            }
+
+        } catch (error: any) {
+            console.error(error.message)
+            alert(`Error adding scrap item, ${error.message}`)
+
+        } finally {
+            setIsLoading(false)
+        }
+
     }
+
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -35,46 +56,54 @@ export function ScrapItemForm() {
                     <Plus className="mr-2 h-4 w-4" /> Add New Scrap Item
                 </Button>
             </DialogTrigger>
+
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>Add New Scrap Item</DialogTitle>
                 </DialogHeader>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="name">Item Name</Label>
-                        <Input id="name" name="name" required />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="description">Description</Label>
-                        <Textarea id="description" name="description" required />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="category">Category</Label>
-                        <Select name="category" required>
-                            <SelectTrigger>
-                                <SelectValue placeholder="Select a category" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {categories.map((category) => (
-                                    <SelectItem key={category.id} value={category.id.toString()}>
-                                        {category.name}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="pricePerKg">Price per Kg</Label>
-                        <Input id="pricePerKg" name="pricePerKg" type="number" step="0.01" required />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="scrapImage">Scrap Image</Label>
-                        <Input id="scrapImage" name="scrapImage" type="file" accept="image/*" required />
-                    </div>
-                    <Button type="submit" className="w-full bg-primary hover:bg-primary/90">
-                        Create Scrap Item
-                    </Button>
-                </form>
+                <DialogDescription>
+                    Add a new scrap item
+                </DialogDescription>
+
+                {isLoading && <p>Scrap item is being added...</p>}
+                {
+                    !isLoading &&
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="name">Item Name</Label>
+                            <Input id="name" name="name" required />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="description">Description</Label>
+                            <Textarea id="description" name="description" required />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="category">Category</Label>
+                            <Select name="category" required>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select a category" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {categories.map((category) => (
+                                        <SelectItem key={category._id} value={category._id}>
+                                            {category.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="pricePerKg">Price per Kg</Label>
+                            <Input id="pricePerKg" name="pricePerKg" type="number" step="0.01" required />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="scrapImage">Scrap Image</Label>
+                            <Input id="scrapImage" name="scrapImage" type="file" accept="image/*" required />
+                        </div>
+                        <Button type="submit" className="w-full bg-primary hover:bg-primary/90">
+                            Create Scrap Item
+                        </Button>
+                    </form>}
             </DialogContent>
         </Dialog>
     )

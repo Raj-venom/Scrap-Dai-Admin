@@ -11,7 +11,7 @@ class ScrapService {
             formData.append('description', description);
             formData.append('pricePerKg', pricePerKg.toString());
             formData.append('category', category);
-            formData.append('scrapImage', scrapImage);
+            formData.append('ScrapImage', scrapImage);
 
             const response = await API.post(`${this.baseUrl}`, formData, {
                 headers: {
@@ -44,6 +44,36 @@ class ScrapService {
             return response.data;
         } catch (error: any) {
             console.log('API :: deleteScrap :: error', error.response?.data || error)
+            return error.response?.data;
+        }
+    }
+
+    async getScrapById(id: string) {
+        try {
+            const response = await API.get(`${this.baseUrl}/${id}`);
+            return response.data;
+        } catch (error: any) {
+            console.log('API :: getScrapById :: error', error.response?.data || error)
+            return error.response?.data;
+        }
+    }
+
+    async getAllScraps() {
+        try {
+            const response = await API.get(`${this.baseUrl}`);
+            return response.data;
+        } catch (error: any) {
+            console.log('API :: getAllScraps :: error', error.response?.data || error)
+            return error.response?.data;
+        }
+    }
+
+    async getAllScrapsPrice() {
+        try {
+            const response = await API.get(`${this.baseUrl}/all/prices`);
+            return response.data;
+        } catch (error: any) {
+            console.log('API :: getAllScrapsPrice :: error', error.response?.data || error)
             return error.response?.data;
         }
     }
