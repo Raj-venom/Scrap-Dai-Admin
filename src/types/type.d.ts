@@ -79,3 +79,12 @@ declare interface Scrap {
     createdAt: string;
     updatedAt: string;
 }
+
+
+declare interface UpdateScrapDetailsParams {
+    _id: string;
+    name: string;
+    description: string;
+    pricePerKg: number;
+    scrapImage: File?;
+}

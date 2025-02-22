@@ -78,6 +78,42 @@ class ScrapService {
         }
     }
 
+    async updateMultipleScrapPrice(scraps: { _id: string, pricePerKg: number }[]) {
+        console.log('API :: updateMultipleScrapPrice :: scraps', scraps)
+        try {
+            const response = await API.patch(`${this.baseUrl}/all/update-multiple`, { scraps });
+            console.log('API :: updateMultipleScrapPrice :: response', response)
+            return response.data;
+        } catch (error: any) {
+            console.log('API :: updateMultipleScrapPrice :: error', error.response?.data || error)
+            return error.response?.data;
+        }
+    }
+
+    async updateScrapDetails({ _id, name, description, pricePerKg, scrapImage }: UpdateScrapDetailsParams) {
+        try {
+            const formData = new FormData();
+            formData.append('name', name);
+            formData.append('description', description);
+            formData.append('pricePerKg', pricePerKg.toString());
+            // if (scrapImage) {
+            //     formData.append('scrapImage', scrapImage);
+            // }
+            formData.append('ScrapImage', scrapImage || '');
+
+            const response = await API.patch(`${this.baseUrl}/update/${_id}`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+
+            return response.data;
+        } catch (error: any) {
+            console.log('API :: updateScrapDetails :: error', error.response?.data || error)
+            return error.response?.data;
+        }
+    }
+
 }
 
 const scrapService = new ScrapService();

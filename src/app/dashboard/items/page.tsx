@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import scrapService from "@/services/scrap.api"
 import categoryService from "@/services/category.api"
+import { ScrapDetailsDialog } from "@/components/scrap-details-dialog"
 
 
 export default function ScrapItemsPage() {
@@ -15,6 +16,7 @@ export default function ScrapItemsPage() {
   const [scrapItems, setScrapItems] = useState<Scrap[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [categories, setCategories] = useState<Category[]>([])
+  const [selectedScrap, setSelectedScrap] = useState<Scrap | null>(null)
 
   const filterOptions = [
     { value: "all", label: "All Categories" },
@@ -47,8 +49,30 @@ export default function ScrapItemsPage() {
     })()
   }, [])
 
+
+  const handleUpdateScrap = async (updatedScrap: UpdateScrapDetailsParams) => {
+    try {
+
+      const response = await scrapService.updateScrapDetails(updatedScrap);
+      const updatedScrapItem = response.data;
+
+
+      setScrapItems((prevScrapItems) =>
+        prevScrapItems.map((item) =>
+          item._id === updatedScrapItem._id
+            ? { ...updatedScrapItem, category: item.category } 
+            : item
+        )
+      );
+
+      setSelectedScrap(null);
+    } catch (error) {
+      console.error("Error updating scrap item:", error);
+    }
+  }
+
+
   const filteredItems = scrapItems.filter((item) => {
-    // match with search term and category filter and description
     const matchesSearch =
       item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -93,8 +117,15 @@ export default function ScrapItemsPage() {
                 <TableCell>{item.description}</TableCell>
                 <TableCell>रु {item.pricePerKg.toFixed(2)}</TableCell>
                 <TableCell>
-                  <Button variant="outline" size="sm">
-                    Edit
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setSelectedScrap(item)
+                    }}
+                  >
+                    View Details
                   </Button>
                 </TableCell>
               </TableRow>
@@ -102,6 +133,13 @@ export default function ScrapItemsPage() {
           </TableBody>
         </Table>
       </div>
+
+      <ScrapDetailsDialog
+        scrap={selectedScrap}
+        isOpen={!!selectedScrap}
+        onClose={() => setSelectedScrap(null)}
+        onUpdate={handleUpdateScrap}
+      />
     </div>
   )
 }

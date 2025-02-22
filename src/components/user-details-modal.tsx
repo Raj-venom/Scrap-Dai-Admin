@@ -132,7 +132,7 @@ export function UserDetailsModal({ user, isOpen, onClose }: UserDetailsModalProp
                                         <TableRow key={order.id}>
                                             <TableCell>{new Date(order.date).toLocaleDateString()}</TableCell>
                                             <TableCell>{order.items.map((item) => item.name).join(", ")}</TableCell>
-                                            <TableCell>₹{order.total.toFixed(2)}</TableCell>
+                                            <TableCell>रु {order.total.toFixed(2)}</TableCell>
                                         </TableRow>
                                     ))} */}
                                 </TableBody>
