@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Home, Users, Tag, Package, DollarSign, BarChart, UserCircle } from "lucide-react"
+import { AdminProfile } from "./admin-profile";
 
 
 const navItems = [
@@ -30,6 +31,9 @@ export function Sidebar() {
                     </Link>
                 ))}
             </nav>
+            <div className="border-t">
+                <AdminProfile />
+            </div>
         </div>
     )
 }

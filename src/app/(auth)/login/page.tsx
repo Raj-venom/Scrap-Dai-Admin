@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ForgotPasswordDialog } from "@/components/auth/forgot-password-dialog"
 import { Eye, EyeOff } from "lucide-react"
 import authService from "@/services/auth.api"
+import toast from "react-hot-toast"
 
 export default function LoginPage() {
     const router = useRouter()
@@ -29,9 +30,9 @@ export default function LoginPage() {
             const response = await authService.login(data)
             if (!response?.success) {
                 setError(response.message)
+                toast.error(response.message)
                 return
             }
-            console.log(response)
             router.replace("/dashboard")
 
         } catch (error: any) {

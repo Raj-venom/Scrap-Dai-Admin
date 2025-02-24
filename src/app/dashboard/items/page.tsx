@@ -8,6 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import scrapService from "@/services/scrap.api"
 import categoryService from "@/services/category.api"
 import { ScrapDetailsDialog } from "@/components/scrap-details-dialog"
+import toast from "react-hot-toast"
 
 
 export default function ScrapItemsPage() {
@@ -27,9 +28,13 @@ export default function ScrapItemsPage() {
     ; (async () => {
       try {
         const response = await categoryService.getAllCategories();
+        if (!response.success) {
+          toast.error(`Error: ${response.message}`)
+        }
         setCategories(response.data);
       } catch (error) {
         console.error("Error fetching categories:", error);
+        toast.error("Failed to fetch categories");
       } finally {
         setIsLoading(false);
       }
@@ -40,9 +45,15 @@ export default function ScrapItemsPage() {
     ; (async () => {
       try {
         const response = await scrapService.getAllScraps()
+        if (!response.success) {
+          toast.error(`Error: ${response.message}`)
+          return
+        }
+
         setScrapItems(response.data)
       } catch (error) {
         console.error("Error fetching scrap items:", error)
+        toast.error("Failed to fetch scrap items")
       } finally {
         setIsLoading(false)
       }
@@ -54,20 +65,27 @@ export default function ScrapItemsPage() {
     try {
 
       const response = await scrapService.updateScrapDetails(updatedScrap);
-      const updatedScrapItem = response.data;
 
+      if (!response.success) {
+        toast.error(`Error: ${response.message}`);
+        return;
+      }
+
+      const updatedScrapItem = response.data;
 
       setScrapItems((prevScrapItems) =>
         prevScrapItems.map((item) =>
           item._id === updatedScrapItem._id
-            ? { ...updatedScrapItem, category: item.category } 
+            ? { ...updatedScrapItem, category: item.category }
             : item
         )
       );
+      toast.success(response.message);
+
 
       setSelectedScrap(null);
-    } catch (error) {
-      console.error("Error updating scrap item:", error);
+    } catch (error: any) {
+      toast.error(`Failed to update scrap item: ${error.message}`);
     }
   }
 

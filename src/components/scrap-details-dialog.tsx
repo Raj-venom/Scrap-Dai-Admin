@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent } from "@/components/ui/card"
 // import { useToast } from "@/components/ui/use-toast"
 import { Loader2, PencilIcon } from "lucide-react"
+import toast from "react-hot-toast"
 
 interface ScrapDetailsDialogProps {
   scrap: Scrap | null
@@ -36,7 +37,6 @@ export function ScrapDetailsDialog({ scrap, isOpen, onClose, onUpdate }: ScrapDe
     pricePerKg: 0,
   })
   const [isLoading, setIsLoading] = useState(false)
-  // const { toast } = useToast()
 
   // Reset form when scrap changes
   useEffect(() => {
@@ -81,16 +81,8 @@ export function ScrapDetailsDialog({ scrap, isOpen, onClose, onUpdate }: ScrapDe
 
       await onUpdate(updateParams)
       setIsEditing(false)
-      // toast({
-      //   title: "Success",
-      //   description: "Scrap item updated successfully",
-      // })
-    } catch (error) {
-      // toast({
-      //   title: "Error",
-      //   description: "Failed to update scrap item",
-      //   variant: "destructive",
-      // })
+    } catch (error: any) {
+      toast.error(`Failed to update scrap item: ${error?.message}`)
     } finally {
       setIsLoading(false)
     }
@@ -163,7 +155,7 @@ export function ScrapDetailsDialog({ scrap, isOpen, onClose, onUpdate }: ScrapDe
               )}
             </div>
 
-            {/* Category Field - Read Only */}
+            {/* Category Field */}
             <div className="space-y-2">
               <Label>Category</Label>
               <div className="py-2">{scrap.category.name}</div>

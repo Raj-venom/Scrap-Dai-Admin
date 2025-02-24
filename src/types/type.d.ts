@@ -88,3 +88,16 @@ declare interface UpdateScrapDetailsParams {
     pricePerKg: number;
     scrapImage: File?;
 }
+
+
+declare interface Admin {
+    _id: string;
+    email: string;
+    password: string;
+    fullName: string;
+    phone: string;
+    avatar: string;
+    role: string;
+    createdAt: string;
+    updatedAt: string;
+}

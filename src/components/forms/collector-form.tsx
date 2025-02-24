@@ -6,14 +6,17 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Plus } from "lucide-react"
+import { Loader2, Plus } from "lucide-react"
 import collectorService from "@/services/collector.api"
+import toast from "react-hot-toast"
 
 export function CollectorForm() {
     const [open, setOpen] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
+        setIsLoading(true)
 
         const formData = new FormData(event.currentTarget)
         const data: CollectorRegisterParams = {
@@ -27,17 +30,19 @@ export function CollectorForm() {
             const response = await collectorService.registerCollector(data)
             console.log(response)
             if (response.success) {
-                alert("Collector registered successfully")
+                toast.success(response.message)
                 setOpen(false)
             } else {
-                alert(`Error registering collector, ${response.message}`)
+                toast.error(`Error: ${response.message}`)
             }
 
         } catch (error: any) {
-            alert(`Error registering collector, ${error.message}`);
+            toast.error(`Failed to register collector: ${error.message}`)
             console.error(error.message)
+        } finally {
+            setIsLoading(false)
         }
-
+        
     }
 
     return (
@@ -72,6 +77,7 @@ export function CollectorForm() {
                         <Textarea id="current_address" name="current_address" required />
                     </div>
                     <Button type="submit" className="w-full bg-primary hover:bg-primary/90">
+                        {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                         Register Collector
                     </Button>
                 </form>

@@ -6,14 +6,17 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Plus } from "lucide-react"
+import { Loader2, Plus } from "lucide-react"
 import categoryService from "@/services/category.api"
+import toast from "react-hot-toast"
 
 export function CategoryForm() {
     const [open, setOpen] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
+        setIsLoading(true)
 
         const formData = new FormData(event.currentTarget)
 
@@ -25,18 +28,20 @@ export function CategoryForm() {
 
         try {
             const response = await categoryService.addNewCategory(data)
-            console.log(response)
 
             if (response.success) {
-                alert("Category added successfully")
+                toast.success(response.message)
                 setOpen(false)
             } else {
-                alert(`Error adding category, ${response.message}`)
+                toast.error(`Error: ${response.message}`)
             }
 
         } catch (error: any) {
             console.error(error.message)
-            alert(`Error adding category, ${error.message}`)
+            toast.error(`Failed to add category: ${error.message
+                }`)
+        } finally {
+            setIsLoading(false)
         }
 
     }
@@ -69,6 +74,7 @@ export function CategoryForm() {
                         <Input id="image" name="image" type="file" accept="image/*" required />
                     </div>
                     <Button type="submit" className="w-full bg-primary hover:bg-primary/90">
+                        {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                         Create Category
                     </Button>
                 </form>

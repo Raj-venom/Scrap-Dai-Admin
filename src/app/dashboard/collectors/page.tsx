@@ -7,6 +7,7 @@ import { SearchFilter } from "@/components/search-filter"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import collectorService from "@/services/collector.api"
+import toast from "react-hot-toast"
 
 const filterOptions = [
   { value: "all", label: "All Collectors" },
@@ -29,6 +30,7 @@ const CollectorsPage = () => {
         setCollectors(response.data);
       } catch (error) {
         console.error("Error fetching collectors:", error);
+        toast.error("Failed to fetch collectors");
       } finally {
         setIsLoading(false);
       }
