@@ -1,36 +1,49 @@
 "use client"
 
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts"
+import dashboardService from "@/services/dashboard.api"
+import { useEffect, useState } from "react"
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, TooltipProps } from "recharts"
 
-const data = [
-    {
-        name: "Jan",
-        total: Math.floor(Math.random() * 5000) + 1000,
-    },
-    {
-        name: "Feb",
-        total: Math.floor(Math.random() * 5000) + 1000,
-    },
-    {
-        name: "Mar",
-        total: Math.floor(Math.random() * 5000) + 1000,
-    },
-    {
-        name: "Apr",
-        total: Math.floor(Math.random() * 5000) + 1000,
-    },
-    {
-        name: "May",
-        total: Math.floor(Math.random() * 5000) + 1000,
-    },
-    {
-        name: "Jun",
-        total: Math.floor(Math.random() * 5000) + 1000,
-    },
-]
+interface DataItem {
+    name: string;
+    total: number;
+}
 
 
 export function Overview() {
+    const [data, setData] = useState<DataItem[]>([])
+    const [loading, setIsLoading] = useState<boolean>(false)
+
+    useEffect(() => {
+        ; (async () => {
+            try {
+                setIsLoading(true)
+                const response = await dashboardService.getCollectionOverview()
+                if (response.success) {
+                    setData(response.data)
+                } else {
+                    console.error("Error fetching dashboard stats:", response.message)
+                }
+            } catch (error) {
+                console.error("Error fetching dashboard stats:", error)
+            } finally {
+                setIsLoading(false)
+            }
+        })()
+    }, [])
+
+    // custom tooltip
+    const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
+        if (active && payload && payload.length) {
+            return (
+                <div className="bg-white p-3 shadow-lg rounded-md border border-green-100">
+                    <p className="font-bold text-green-600">{`${payload[0].value} kg`}</p>
+                </div>
+            )
+        }
+        return null
+    }
+
     return (
         <ResponsiveContainer width="100%" height={350}>
             <BarChart data={data}>
@@ -40,11 +53,23 @@ export function Overview() {
                     fontSize={12}
                     tickLine={false}
                     axisLine={false}
-                    tickFormatter={(value) => `${value}kg`}
+                    tickFormatter={(value) => `${value} kg`}
                 />
-                <Bar dataKey="total" fill="#389936" radius={[4, 4, 0, 0]} className="fill-primary" />
+                <Tooltip
+                    content={<CustomTooltip />}
+                    cursor={false}
+                    wrapperStyle={{ outline: "none" }}
+                    isAnimationActive={true}
+                    position={{ y: -10 }}
+                />
+                <Bar
+                    dataKey="total"
+                    fill="#389936"
+                    radius={[4, 4, 0, 0]}
+                    className="fill-primary"
+                    activeBar={{ fill: "#2d7a2a", stroke: "#389936", strokeWidth: 2 }}
+                />
             </BarChart>
         </ResponsiveContainer>
     )
 }
-
