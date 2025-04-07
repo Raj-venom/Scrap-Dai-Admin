@@ -42,6 +42,15 @@ function Dashboard() {
     })();
   }, []);
 
+
+  if (loading || dashboardCards.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-gray-500">Loading dashboard...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold">Dashboard</h1>
