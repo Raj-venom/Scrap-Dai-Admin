@@ -53,6 +53,7 @@ export default async function PerformancePage() {
                   <TableHead>Name</TableHead>
                   <TableHead>Phone</TableHead>
                   <TableHead>Total Amount ($)</TableHead>
+                  <TableHead>Order Count</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -70,6 +71,7 @@ export default async function PerformancePage() {
                     <TableCell>{seller.fullName}</TableCell>
                     <TableCell>{seller.phone}</TableCell>
                     <TableCell>${seller.totalAmount.toFixed(2)}</TableCell>
+                    <TableCell>{seller.orderCount}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -90,6 +92,7 @@ export default async function PerformancePage() {
                   <TableHead>Name</TableHead>
                   <TableHead>Phone</TableHead>
                   <TableHead>Total Collected (kg)</TableHead>
+                  <TableHead>Order Count</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -107,6 +110,7 @@ export default async function PerformancePage() {
                     <TableCell>{collector.fullName}</TableCell>
                     <TableCell>{collector.phone}</TableCell>
                     <TableCell>{collector.totalWeight}</TableCell>
+                    <TableCell>{collector.orderCount}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
