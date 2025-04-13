@@ -55,6 +55,16 @@ class AuthService {
         }
     }
 
+    async refreshAccessToken() {
+        try {
+            const response = await API.post(`${this.baseUrl}/refresh-access-token`);
+            return response.data;
+        } catch (error: any) {
+            console.log('API :: refreshAccessToken :: error', error.response?.data || error)
+            return error.response?.data;
+        }
+    }
+
 }
 
 const authService = new AuthService();
