@@ -2,11 +2,14 @@
 
 import { useEffect, useState } from "react"
 import Image from "next/image"
+import toast from "react-hot-toast"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Button } from "@/components/ui/button"
 import orderService from "@/services/order.api"
+import userService from "@/services/user.api"
 
 interface OrderItem {
     scrap: {
@@ -35,6 +38,7 @@ interface UserDetailsModalProps {
     user: User | null;
     isOpen: boolean;
     onClose: () => void;
+    onUserUpdate: (updatedUser: User) => void;
 }
 
 function CustomBadge({ children, className }: { children: React.ReactNode, className?: string }) {
@@ -45,7 +49,7 @@ function CustomBadge({ children, className }: { children: React.ReactNode, class
     );
 }
 
-export function UserDetailsModal({ user, isOpen, onClose }: UserDetailsModalProps) {
+export function UserDetailsModal({ user, isOpen, onClose, onUserUpdate }: UserDetailsModalProps) {
     const [orderFilter, setOrderFilter] = useState("all");
     const [orders, setOrders] = useState<Order[]>([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -72,7 +76,41 @@ export function UserDetailsModal({ user, isOpen, onClose }: UserDetailsModalProp
         }
     };
 
-    if (!user) return null;
+    const handleBanToggle = async () => {
+        if (!user) return;
+
+        const confirmationMessage = user.isBanned
+            ? "Are you sure you want to unban this user?"
+            : "Are you sure you want to ban this user?";
+
+        if (!window.confirm(confirmationMessage)) return;
+
+        const loadingToast = toast.loading(user.isBanned ? "Unbanning user..." : "Banning user...");
+
+        try {
+            const response = user.isBanned
+                ? await userService.unBanUser(user._id)
+                : await userService.banUser(user._id);
+
+            if (response.success) {
+                toast.success(`User ${user.isBanned ? "unbanned" : "banned"} successfully`, {
+                    id: loadingToast,
+                });
+
+                const updatedUser = { ...user, isBanned: !user.isBanned };
+                onUserUpdate(updatedUser);
+            } else {
+                toast.error(response.message || "Failed to update user status", {
+                    id: loadingToast,
+                });
+            }
+        } catch (error) {
+            toast.error("An error occurred while updating user status", {
+                id: loadingToast,
+            });
+            console.error("Error updating user status:", error);
+        }
+    };
 
     const getStatusColor = (status: string) => {
         switch (status.toLowerCase()) {
@@ -131,6 +169,8 @@ export function UserDetailsModal({ user, isOpen, onClose }: UserDetailsModalProp
 
     const stats = calculateOrderStats();
 
+    if (!user) return null;
+
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
@@ -181,6 +221,20 @@ export function UserDetailsModal({ user, isOpen, onClose }: UserDetailsModalProp
                                 <p>
                                     <strong>Role:</strong> {user.role}
                                 </p>
+                                <div className="mt-4 flex items-center gap-4">
+                                    <Button
+                                        variant={user.isBanned ? "default" : "destructive"}
+                                        onClick={handleBanToggle}
+                                        className="w-fit"
+                                    >
+                                        {user.isBanned ? "Unban User" : "Ban User"}
+                                    </Button>
+                                    {user.isBanned && (
+                                        <span className="text-sm text-red-500">
+                                            This user is currently banned
+                                        </span>
+                                    )}
+                                </div>
                             </div>
                         </CardContent>
                     </Card>
@@ -228,9 +282,7 @@ export function UserDetailsModal({ user, isOpen, onClose }: UserDetailsModalProp
                         <div className="w-[180px]">
                             <Select
                                 value={orderFilter}
-                                onValueChange={(value) => {
-                                    setOrderFilter(value);
-                                }}
+                                onValueChange={setOrderFilter}
                             >
                                 <SelectTrigger>
                                     <SelectValue placeholder="Filter orders" />

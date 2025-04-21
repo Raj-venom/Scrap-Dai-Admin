@@ -13,6 +13,26 @@ class UserService {
         }
     }
 
+    async banUser(userId: string) {
+        try {
+            const response = await API.patch(`${this.baseUrl}/ban-user/${userId}`);
+            return response.data;
+        } catch (error: any) {
+            console.log('API :: banUser :: error', error.response?.data || error)
+            return error.response?.data;
+        }
+    }
+
+    async unBanUser(userId: string) {
+        try {
+            const response = await API.patch(`${this.baseUrl}/unban-user/${userId}`);
+            return response.data;
+        } catch (error: any) {
+            console.log('API :: unBanUser :: error', error.response?.data || error)
+            return error.response?.data;
+        }
+    }
+
 }
 
 const userService = new UserService();

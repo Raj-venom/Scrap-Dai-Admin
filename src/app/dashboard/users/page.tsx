@@ -12,6 +12,7 @@ const filterOptions = [
   { value: "all", label: "All Users" },
   { value: "verified", label: "Verified Users" },
   { value: "unverified", label: "Unverified Users" },
+  { value: "banned", label: "Banned Users" },
 ]
 
 export default function UsersPage() {
@@ -35,6 +36,11 @@ export default function UsersPage() {
     })();
   }, []);
 
+  const handleUserUpdate = (updatedUser: User) => {
+    setUsers(users.map(u => u._id === updatedUser._id ? updatedUser : u));
+    setSelectedUser(updatedUser);
+  };
+
   const filteredUsers = users.filter((user) => {
     const matchesSearch =
       user.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -45,6 +51,7 @@ export default function UsersPage() {
     if (filterValue === "all") return matchesSearch
     if (filterValue === "verified") return matchesSearch && user.isverified
     if (filterValue === "unverified") return matchesSearch && !user.isverified
+    if (filterValue === "banned") return matchesSearch && user?.isBanned
 
     return matchesSearch
   })
@@ -71,7 +78,7 @@ export default function UsersPage() {
               <TableHead>Email</TableHead>
               <TableHead>Phone</TableHead>
               <TableHead>Gender</TableHead>
-              <TableHead>Address</TableHead>
+              <TableHead>Banned</TableHead>
               <TableHead>Verified</TableHead>
               <TableHead>Joined</TableHead>
               <TableHead>Actions</TableHead>
@@ -84,7 +91,7 @@ export default function UsersPage() {
                 <TableCell>{user.email}</TableCell>
                 <TableCell>{user.phone}</TableCell>
                 <TableCell>{user.gender}</TableCell>
-                <TableCell>{user.current_address}</TableCell>
+                <TableCell>{user?.isBanned ? "Yes" : "No"}</TableCell>
                 <TableCell>{user.isverified ? "Yes" : "No"}</TableCell>
                 <TableCell>{new Date(user.createdAt).toLocaleDateString()}</TableCell>
                 <TableCell>
@@ -101,6 +108,7 @@ export default function UsersPage() {
         user={selectedUser}
         isOpen={!!selectedUser}
         onClose={() => setSelectedUser(null)}
+        onUserUpdate={handleUserUpdate}
       />
     </div>
   )

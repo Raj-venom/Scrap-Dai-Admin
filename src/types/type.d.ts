@@ -52,6 +52,7 @@ declare interface User {
     current_address: string;
     isverified: boolean;
     role: string;
+    isBanned: boolean;
     createdAt: string;
     updatedAt: string;
 }
