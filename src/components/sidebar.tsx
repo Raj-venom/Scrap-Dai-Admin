@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Home, Users, Tag, Package, DollarSign, BarChart, UserCircle } from "lucide-react"
+import { Home, Users, Tag, Package, DollarSign, BarChart, UserCircle, Megaphone, Layers } from "lucide-react"
 import { AdminProfile } from "./admin-profile";
 
 
@@ -7,10 +7,11 @@ const navItems = [
     { name: "Dashboard", href: "/dashboard", icon: Home },
     { name: "Collectors", href: "/dashboard/collectors", icon: Users },
     { name: "Users", href: "/dashboard/users", icon: UserCircle },
-    { name: "Categories", href: "/dashboard/categories", icon: Tag },
+    { name: "Categories", href: "/dashboard/categories", icon: Layers },
     { name: "Scrap Items", href: "/dashboard/items", icon: Package },
     { name: "Pricing", href: "/dashboard/pricing", icon: DollarSign },
     { name: "Performance", href: "/dashboard/performance", icon: BarChart },
+    { name: "Prmotions", href: "/dashboard/promotions", icon: Megaphone },
 ]
 
 export function Sidebar() {
