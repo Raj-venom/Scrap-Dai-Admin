@@ -11,7 +11,8 @@ const navItems = [
     { name: "Scrap Items", href: "/dashboard/items", icon: Package },
     { name: "Pricing", href: "/dashboard/pricing", icon: DollarSign },
     { name: "Performance", href: "/dashboard/performance", icon: BarChart },
-    { name: "Prmotions", href: "/dashboard/promotions", icon: Megaphone },
+    { name: "Promotions", href: "/dashboard/promotions", icon: Megaphone },
+    {name: "Promo-management", href: "/dashboard/promotions-management", icon: Megaphone},
 ]
 
 export function Sidebar() {
