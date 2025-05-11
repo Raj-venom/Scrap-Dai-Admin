@@ -1,7 +1,7 @@
 "use client";
 
 import authService from "@/services/auth.api";
-import Router from "next/navigation";
+import { useRouter } from "next/navigation"; 
 import { useEffect, useState } from "react";
 
 export default function Home() {
@@ -10,7 +10,8 @@ export default function Home() {
   const [error, setError] = useState(null);
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const router = Router.useRouter();
+  const router = useRouter();
+
 
 
   useEffect(() => {
