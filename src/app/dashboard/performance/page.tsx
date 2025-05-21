@@ -52,7 +52,7 @@ export default async function PerformancePage() {
                   <TableHead>Avatar</TableHead>
                   <TableHead>Name</TableHead>
                   <TableHead>Phone</TableHead>
-                  <TableHead>Total Amount ($)</TableHead>
+                  <TableHead>Total Amount (रु)</TableHead>
                   <TableHead>Order Count</TableHead>
                 </TableRow>
               </TableHeader>
@@ -70,7 +70,7 @@ export default async function PerformancePage() {
                     </TableCell>
                     <TableCell>{seller.fullName}</TableCell>
                     <TableCell>{seller.phone}</TableCell>
-                    <TableCell>${seller.totalAmount.toFixed(2)}</TableCell>
+                    <TableCell>रु {seller.totalAmount.toFixed(2)}</TableCell>
                     <TableCell>{seller.orderCount}</TableCell>
                   </TableRow>
                 ))}
