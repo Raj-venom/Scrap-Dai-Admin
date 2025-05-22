@@ -10,7 +10,8 @@ import { Loader2, Plus } from "lucide-react"
 import categoryService from "@/services/category.api"
 import toast from "react-hot-toast"
 
-export function CategoryForm() {
+export function CategoryForm ({ onSubmitFinished }: { onSubmitFinished: () => Promise<void> }) {
+
     const [open, setOpen] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
 
@@ -41,6 +42,7 @@ export function CategoryForm() {
             toast.error(`Failed to add category: ${error.message
                 }`)
         } finally {
+            await onSubmitFinished()
             setIsLoading(false)
         }
 
