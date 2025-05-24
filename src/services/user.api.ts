@@ -13,9 +13,9 @@ class UserService {
         }
     }
 
-    async banUser(userId: string) {
+    async banUser(userId: string, bannedReason: string) {
         try {
-            const response = await API.patch(`${this.baseUrl}/ban-user/${userId}`);
+            const response = await API.patch(`${this.baseUrl}/ban-user/${userId}`, { bannedReason });
             return response.data;
         } catch (error: any) {
             console.log('API :: banUser :: error', error.response?.data || error)

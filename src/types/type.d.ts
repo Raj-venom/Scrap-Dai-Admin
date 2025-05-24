@@ -53,6 +53,7 @@ declare interface User {
     isverified: boolean;
     role: string;
     isBanned: boolean;
+    bannedReason?: string;
     createdAt: string;
     updatedAt: string;
 }
